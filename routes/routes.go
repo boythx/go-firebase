@@ -20,5 +20,8 @@ func InitRoutes() {
 	e.POST("/", func(c echo.Context) error {
 		return crud.AddData(c)
 	})
+	e.DELETE("/:_id", func(c echo.Context) error {
+		return crud.AddData(c)
+	})
 	e.Logger.Fatal(e.Start(":9000"))
 }

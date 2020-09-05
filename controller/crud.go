@@ -6,7 +6,6 @@ import (
 	"firebase/models"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/mitchellh/mapstructure"
@@ -37,16 +36,10 @@ func Home(c echo.Context) error {
 }
 
 func AddData(c echo.Context) error {
-	price, error := strconv.ParseFloat(c.FormValue("price"), 10)
-	if error != nil {
-		return nil
+	IncomesData := new(models.Income)
+	if err := c.Bind(IncomesData); err != nil {
+		return err
 	}
-	IncomesData := models.Income{
-		Date:  c.FormValue("date"),
-		List:  c.FormValue("list"),
-		Price: price,
-	}
-	// client := initial.Init(ctx)
 	_, _, err := client.Collection("income-v2").Add(ctx, IncomesData)
 
 	if err != nil {
@@ -55,4 +48,11 @@ func AddData(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, nil)
 
+}
+
+func Destroy(c echo.Context) error {
+	client.Collection("income-v2")
+	// .Where(c.Param("_id")).Delete(ctx)
+	return c.JSON(http.StatusNoContent, nil)
+	// _, _, err := client.Collection("income-v2").Add(ctx, IncomesData)
 }
