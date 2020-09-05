@@ -10,9 +10,6 @@ import (
 	firebase "firebase.google.com/go"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-
-	// "github.com/gorilla/mux"
-
 	"github.com/mitchellh/mapstructure"
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
