@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	models "firebase/models"
+	"firebase/models"
 	"log"
 	"net/http"
 
@@ -22,9 +22,8 @@ type App struct {
 
 func main() {
 	route := App{}
+	route.Init()
 	e := echo.New()
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
@@ -38,7 +37,7 @@ func main() {
 
 func (route *App) Init() {
 	route.ctx = context.Background()
-	sa := option.WithCredentialsFile("service.json")
+	sa := option.WithCredentialsFile("income.json")
 	app, err := firebase.NewApp(route.ctx, nil, sa)
 	if err != nil {
 		log.Fatalln(err)
@@ -52,11 +51,10 @@ func (route *App) Init() {
 }
 
 func (route *App) Home(c echo.Context) error {
-	BooksData := []models.Income{}
-
+	IncomesData := []models.Income{}
 	iter := route.client.Collection("incomes").Documents(route.ctx)
 	for {
-		BookData := models.Income{}
+		IncomeData := models.Income{}
 		doc, err := iter.Next()
 		if err == iterator.Done {
 			break
@@ -65,8 +63,8 @@ func (route *App) Home(c echo.Context) error {
 			return err
 		}
 
-		mapstructure.Decode(doc.Data(), &BookData)
-		BooksData = append(BooksData, BookData)
+		mapstructure.Decode(doc.Data(), &IncomeData)
+		IncomesData = append(IncomesData, IncomeData)
 	}
-	return c.JSON(http.StatusOK, BooksData)
+	return c.JSON(http.StatusOK, IncomesData)
 }
